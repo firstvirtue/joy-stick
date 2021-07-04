@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 
 function ThumbStick() {
+  const THUMB_SIZE = 100;
+  const [pressed, setPressed] = useState(false);
+  const [startPoint, setStartPoint] = useState({ x: 0, y: 0});
+  const [currentPoint, setCurrentPoint] = useState({ x: 0, y: 0});
+  const thumb = useRef(null);
+  const container = useRef(null);
+  const requestRef = useRef();
 
   const stickContainerStyle = {
     display: "flex",
@@ -23,22 +30,37 @@ function ThumbStick() {
   const thumbStyle = {
     display: "block",
     margin: "0 auto",
-    width: "100px",
-    height: "100px"
+    width: THUMB_SIZE,
+    height: THUMB_SIZE,
+    transform: `translate(${currentPoint.x}px, ${currentPoint.y}px)`
   }
 
-  const [selected, setSelected] = useState(false);
-  const [startPoint, setStartPoint] = useState({ x: 0, y: 0});
-  const [currentPoint, setCurrentPoint] = useState({ x: 0, y: 0});
-  const thumb = useRef(null);
-  const container = useRef(null);
+  // useEffect(() => {
+  //   thumb.current.style.transform = `translate(${currentPoint.x}px, ${currentPoint.y}px)`;
+  // }, [currentPoint]);
+
+  const animate = () => {
+    if(pressed) {
+      const magnitude = Math.sqrt(currentPoint.x * currentPoint.x + currentPoint.y * currentPoint.y);
+      const dir = {
+        x: currentPoint.x / magnitude,
+        y: currentPoint.y / magnitude
+      }
+      // console.log(dir);
+
+      // [TODO] send this to scene
+    }
+
+    requestRef.current = requestAnimationFrame(animate);
+  }
 
   useEffect(() => {
-    thumb.current.style.transform = `translate(${currentPoint.x}px, ${currentPoint.y}px)`;
-  }, [currentPoint]);
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  });
 
   const handleTouchStart = (e) => {
-    setSelected(true);
+    setPressed(true);
 
     setStartPoint({
       x: currentPoint.x,
@@ -47,7 +69,7 @@ function ThumbStick() {
   }
 
   const handleTouchEnd = (e) => {
-    setSelected(false);
+    setPressed(false);
 
     setCurrentPoint({
       x: 0,
@@ -56,16 +78,12 @@ function ThumbStick() {
   }
 
   const handleTouchMove = (e) => {
-    if(selected) {
-      // const x = e.changedTouches[0].pageX;
-      // const y = e.changedTouches[0].pageY;
+    if(pressed) {
 
       setCurrentPoint({
         x: e.changedTouches[0].pageX - container.current.offsetLeft - 100,
         y: e.changedTouches[0].pageY - container.current.offsetTop - 100
       })
-
-      // console.log(currentPoint);
     }
   }
   
@@ -75,12 +93,12 @@ function ThumbStick() {
       onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchMove={handleTouchMove}>
       <div style={backgroundStyle}>
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="70" fill="transparent" stroke="red" strokeWidth="5"/>
+          <circle cx={THUMB_SIZE} cy={THUMB_SIZE} r="70" fill="transparent" stroke="red" strokeWidth="5"/>
         </svg>
       </div>
       <div style={thumbStyle} ref={thumb}>
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="100"/>
+          <circle cx={THUMB_SIZE} cy={THUMB_SIZE} r={THUMB_SIZE}/>
         </svg>
       </div>
     </div>
