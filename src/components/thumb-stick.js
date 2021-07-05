@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 function ThumbStick() {
   const THUMB_SIZE = 100;
+  const R = 100;
   const [pressed, setPressed] = useState(false);
   const [startPoint, setStartPoint] = useState({ x: 0, y: 0});
   const [currentPoint, setCurrentPoint] = useState({ x: 0, y: 0});
@@ -35,10 +36,6 @@ function ThumbStick() {
     transform: `translate(${currentPoint.x}px, ${currentPoint.y}px)`
   }
 
-  // useEffect(() => {
-  //   thumb.current.style.transform = `translate(${currentPoint.x}px, ${currentPoint.y}px)`;
-  // }, [currentPoint]);
-
   const animate = () => {
     if(pressed) {
       const magnitude = Math.sqrt(currentPoint.x * currentPoint.x + currentPoint.y * currentPoint.y);
@@ -46,9 +43,11 @@ function ThumbStick() {
         x: currentPoint.x / magnitude,
         y: currentPoint.y / magnitude
       }
-      // console.log(dir);
 
-      // [TODO] send this to scene
+      if(magnitude) {
+        console.log(dir);
+        // [TODO] send this to scene
+      }
     }
 
     requestRef.current = requestAnimationFrame(animate);
@@ -79,11 +78,17 @@ function ThumbStick() {
 
   const handleTouchMove = (e) => {
     if(pressed) {
+      const x = e.changedTouches[0].pageX - container.current.offsetLeft - 100;
+      const y = e.changedTouches[0].pageY - container.current.offsetTop - 100;
 
-      setCurrentPoint({
-        x: e.changedTouches[0].pageX - container.current.offsetLeft - 100,
-        y: e.changedTouches[0].pageY - container.current.offsetTop - 100
-      })
+      // console.log(R, x, y, Math.sqrt(x * x + y * y))
+
+      // if(R > Math.sqrt(x * x + y * y)) {
+        setCurrentPoint({
+          x: x,
+          y: y
+        })
+      // }
     }
   }
   
