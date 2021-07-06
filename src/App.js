@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import ThumbStick from './components/thumb-stick';
+import JoyStick from './components/joy-stick';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <ThumbStick></ThumbStick>
+        <JoyStick></JoyStick>
         <a
           className="App-link"
           href="https://reactjs.org"

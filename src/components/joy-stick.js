@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-function ThumbStick() {
+function JoyStick() {
   const THUMB_SIZE = 100;
   const R = 100;
   const [pressed, setPressed] = useState(false);
@@ -111,4 +111,4 @@ function ThumbStick() {
   )
 }
 
-export default ThumbStick;
+export default JoyStick;
